@@ -2,3 +2,4 @@ node_modules
 after-section-06
 txt
 package-lock.json
+.env
