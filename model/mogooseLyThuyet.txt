@@ -1,4 +1,0 @@
-tour.find({$and : [{price: {$gt: 500}},{rating: {$gt: 4.8}}]}, {name: 1})
-
-cách 2 : 
-tour.find({price: {$gt: 500}, rating:{$gt:4.8} }, {name: 1})
