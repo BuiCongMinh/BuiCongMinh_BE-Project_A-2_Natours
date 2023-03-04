@@ -18,18 +18,21 @@ app.use((req, res, next) => {
     next()
 })
 
-// 3) ROUTER 
-
-// cách 1
-// app.get('/api/v1/tours/',getAllTuor)
-// app.post('/api/v1/tours',postTour)
-// app.patch('/api/v1/tours/:id', patchATour)
-// app.delete('/api/v1/tours/:id', deleteATour)
-// app.get('/api/v1/tours/:id',getATuor)
-
 
 // cách 2
 app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/user', userRouter)
+
+
+//Các router có đường url ko xác định sẽ được truyền vào đây !
+app.all('*',(req,res,next)=>{   // app.all là định chỉ tất cả các phương thức restAPI
+    res.status(404).json({
+        status: 'fail',
+        message: `Can't find ${req.originalUrl} on this server ! `
+    })
+
+})
+
+
 
 module.exports = app;

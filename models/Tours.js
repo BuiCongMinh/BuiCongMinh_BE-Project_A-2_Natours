@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const slugify = require('slugify')
-const validator = require('validator')
+// const validator = require('validator')
 
 const TourSchema = new mongoose.Schema({
     name: {
@@ -46,8 +46,9 @@ const TourSchema = new mongoose.Schema({
     createAt: { type: Date, default: Date.now() },
     startDates: [Date],
     secretTour: { type: Boolean, default: false }
-}, { collection: 'tour' }
-    , {
+},
+    { collection: 'tour' },
+    {
         toJSON: { virtuals: true },
         toObject: { virtuals: true }
     });
@@ -73,23 +74,23 @@ TourSchema.pre('save', function (next) {
 // })
 
 //QUERY MIDDLEWARE
-// TourSchema.pre(/^find/,function(next){
-//     this.find({secretTour:{ $ne: true}});
-//     this.start = Date.now();
-//     next()
-// })  
-// TourSchema.post(/^find/,function(docs,next){
-//     console.log(`Query took ${Date.now() - this.start} milliseconds! `);
+TourSchema.pre(/^find/, function (next) {
+    this.find({ secretTour: { $ne: true } });
+    this.start = Date.now();
+    next()
+})
+TourSchema.post(/^find/, function (docs, next) {
+    console.log(`Query took ${Date.now() - this.start} milliseconds! `);
 
-//     next()
-// })
+    next()
+})
 
-//AGGREGATION MIDDLEWARE
-// TourSchema.pre('aggregate',function(next){
-//     this.pipeline().unshift({$match:{secretTour: {$ne: true}}})
-//     console.log(this.pipeline());
-//     next()
-// });
+// AGGREGATION MIDDLEWARE
+TourSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
+    console.log(this.pipeline());
+    next()
+});
 
 const Tour = mongoose.model('tour', TourSchema)
 

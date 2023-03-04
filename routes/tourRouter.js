@@ -6,10 +6,7 @@ router.route('/top-5-cheap').get(tourController.aliasTopTour,tourController.getA
 router.route('/tour-stats').get(tourController.getTourStars);
 router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan)
 router.route('/').get(tourController.getAllTuor).post( tourController.postTour );
-// router.use((req,res,next)=>{
-//     console.log('>>> Gửi lời chào middellwere !');
-//     next()
-// })
+
 router.route('/:id').get(tourController.getATuor).delete(tourController.deleteATour).patch(tourController.patchATour)
 
 module.exports = router
