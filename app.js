@@ -25,14 +25,29 @@ app.use('/api/v1/user', userRouter)
 
 
 //Các router có đường url ko xác định sẽ được truyền vào đây !
-app.all('*',(req,res,next)=>{   // app.all là định chỉ tất cả các phương thức restAPI
-    res.status(404).json({
-        status: 'fail',
-        message: `Can't find ${req.originalUrl} on this server ! `
-    })
+app.all('*',(req,res,next)=>{   // app.all là chỉ tất cả các phương thức restAPI
+    // res.status(404).json({
+    //     status: 'fail',
+    //     message: `Can't find ${req.originalUrl} on this server ! `
+    // })
 
+    const err = new Error(`Cant find ${req.originalUrl} on this server !`) ;   // req.originalUrl chính là định nghĩa url của router
+    err.status = 'fail';
+    err.statusCode = 404;
+    next(err);
 })
 
+
+//Tất cả lỗi trên server sẽ được đổ vào hàm này !
+app.use((err, req, res, next )=>{
+    err.statusCode = err.statusCode || 500;
+    err.status = err.status || 'error';
+    
+    res.status(err.statusCode).json({
+        status: err.statusCode,
+        message: err.message
+    })
+})
 
 
 module.exports = app;
