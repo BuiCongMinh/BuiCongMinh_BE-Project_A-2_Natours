@@ -29,7 +29,6 @@ app.use('/api/v1/user', userRouter);
 
 //Các router có đường url ko xác định sẽ được truyền vào đây !
 app.all('*', (req, res, next) => {   // app.all là chỉ tất cả các phương thức restAPI
-
     next(new AppError(`Cant find ${req.originalUrl} on this server ! `));
 }) 
 
