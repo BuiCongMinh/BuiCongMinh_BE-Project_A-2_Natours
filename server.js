@@ -9,6 +9,8 @@ const DB = process.env.MONGOATLAST_URL
 
 mongoose.connect(DB, {
     useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false
 }).then(() => {
     console.log("DB conection succsess !");
 });

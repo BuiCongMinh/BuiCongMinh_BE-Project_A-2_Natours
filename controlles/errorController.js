@@ -39,7 +39,7 @@ const sendErrorProd = (err, res) => {
 }
 
 module.exports = (err, req, res, next) => {
-    console.log('>>> check stack:',err);
+    // console.log('>>> check stack:',err);
 
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
