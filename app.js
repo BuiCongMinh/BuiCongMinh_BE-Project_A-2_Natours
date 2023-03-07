@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 });
 
 
-// cách 2
+// 3) ROUTER
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/user', userRouter);
 
