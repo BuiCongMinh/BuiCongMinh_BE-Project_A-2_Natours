@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Please provide your password ! '],
-        minlength: 8
+        minlength: 8,
+        select: false
     },
     passwordConfirm: {
         type: String,
@@ -33,7 +34,7 @@ const userSchema = new mongoose.Schema({
 }, { collection: 'user' });
 
 
-userSchema.pre('save', async function (next) { 
+userSchema.pre('save', async function (next) {
     // Only run this function if passsword was actually mnodified  (chỉ chạy khi password thay đổi !)
     if (!this.isModified('password')) return next();
 
@@ -42,7 +43,15 @@ userSchema.pre('save', async function (next) {
 
     //Delete passwordConfirm field (xoá trường xác nhận mật khẩu !)
     this.passwordConfirm = undefined;
+    next();
 });
+
+userSchema.methods.correctPassword = async function (
+    candidatePassword,
+    userPassword
+) {
+    return await bcrypt.compare(candidatePassword, userPassword)
+}
 
 const User = mongoose.model('user', userSchema)
 module.exports = User

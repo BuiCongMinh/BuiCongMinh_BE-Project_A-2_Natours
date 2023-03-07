@@ -1,4 +1,19 @@
-exports.getAllUser = (req,res)=>{
+const User = require('../models/User')
+const catchAsync = require('../utils/catchAsync')
+
+
+exports.getAllUser = catchAsync(async (req, res) => {
+    const users = await User.find()
+
+    res.status(200).json({
+        result: users.length,
+        status: " success ! ",
+        data: users
+    });
+});
+
+
+exports.getAUser = (req, res) => {
     res.status(200).json({
         status: 'success!',
         data: {
@@ -6,7 +21,7 @@ exports.getAllUser = (req,res)=>{
         }
     })
 }
-exports.getAUser = (req,res)=>{
+exports.createUser = (req, res) => {
     res.status(200).json({
         status: 'success!',
         data: {
@@ -14,7 +29,7 @@ exports.getAUser = (req,res)=>{
         }
     })
 }
-exports.createUser = (req,res)=>{
+exports.updateUser = (req, res) => {
     res.status(200).json({
         status: 'success!',
         data: {
@@ -22,15 +37,7 @@ exports.createUser = (req,res)=>{
         }
     })
 }
-exports.updateUser = (req,res)=>{
-    res.status(200).json({
-        status: 'success!',
-        data: {
-            msg: 'route này chưa định nghĩa !'
-        }
-    })
-}
-exports.deleteUser = (req,res)=>{
+exports.deleteUser = (req, res) => {
     res.status(200).json({
         status: 'success!',
         data: {
