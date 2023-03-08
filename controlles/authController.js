@@ -49,7 +49,7 @@ module.exports = {
         })
     }),
 
-    protect: catchAsync(async (req, res, next) => { 
+    protect: catchAsync(async (req, res, next) => {
         // 1) get token and check of its there ( lấy token và check xem có lấy được ko ?)
         let token;
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -60,7 +60,7 @@ module.exports = {
             return next(new AppError('You are not logged in ! Please log in to get access. ', 401));
         }
 
-        
+
         // 2) Verification token (xác minh token !)
         const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
@@ -76,7 +76,18 @@ module.exports = {
         };
 
         // GRANT ACCESS TO PROTECTED ROUTE (Cấp quyền truy cập vào route được bảo vệ !)
-        req.user = currentUser;   
+        req.user = currentUser;
         next();
     }),
+
+    restrictTo: (...roles) => {
+        return (req, res, next) => {
+            //roles ['admin','lead-guide']. role='user'
+            if (!roles.includes(req.user.role)) {
+                return next(new AppError('You do not have permission to perform this action', 403));
+            };
+            next();
+        }
+    }
+
 }
