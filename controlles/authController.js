@@ -1,3 +1,4 @@
+const { promisify } = require('util')
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
@@ -11,12 +12,7 @@ const signToken = id => {
 
 module.exports = {
     signup: catchAsync(async (req, res, next) => {
-        const newUser = await User.create({
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password,
-            passwordConfirm: req.body.passwordConfirm
-        });
+        const newUser = await User.create(req.body);
 
         const token = signToken(newUser._id);
 
@@ -51,5 +47,36 @@ module.exports = {
             status: 'success !',
             token
         })
+    }),
+
+    protect: catchAsync(async (req, res, next) => { 
+        // 1) get token and check of its there ( lấy token và check xem có lấy được ko ?)
+        let token;
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        };
+        // console.log('check token:', token);
+        if (!token) {
+            return next(new AppError('You are not logged in ! Please log in to get access. ', 401));
+        }
+
+        
+        // 2) Verification token (xác minh token !)
+        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+        // 3) Check if user still exists(check người dùng có tồn tại hay ko !)
+        const currentUser = await User.findById(decoded.id);
+        if (!currentUser) {
+            return next(new AppError('The user belonging to this token does no longer exist ! ', 401))
+        }
+
+        // 4) Check if user changed password after the token was issued (check user có thay đổi password sau khi token được phát hành hay ko !)
+        if (currentUser.changedPasswordAfter(decoded.iat)) {
+            return next(new AppError('User recently changed password ! Please log again. ', 401));
+        };
+
+        // GRANT ACCESS TO PROTECTED ROUTE (Cấp quyền truy cập vào route được bảo vệ !)
+        req.user = currentUser;   
+        next();
     }),
 }
